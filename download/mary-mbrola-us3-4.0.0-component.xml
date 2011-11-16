@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<marytts-install xmlns="http://mary.dfki.de/installer">
+    <voice gender="male" locale="en-US" name="mbrola-us3" type="MBROLA" version="4.0.0">
+        <description>A US English female MBROLA diphone voice</description>
+        <license href="http://mary.dfki.de/download/Mbrola%20software%20user%20agreement.html"/>
+        <package filename="mary-mbrola-us3-4.0.0.zip"
+            md5sum="78a44b77fb10959f2829a2af39edd588" size="7045525">
+            <location href="http://mary.dfki.de/download/4.0/"/>
+        </package>
+        <depends language="en-US" version="4.0.0"/>
+    </voice>
+</marytts-install>

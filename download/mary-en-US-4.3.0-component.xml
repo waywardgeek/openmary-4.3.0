@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<marytts-install>
+  <language locale="en-US" name="en-US" version="4.3.0">
+    <description>US English language component</description>
+    <license href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html" />
+    <package filename="mary-en-US-4.3.0.zip" md5sum="bab4637003f3bdb93717fa7553121877" size="8325346">
+      <location href="http://mary.dfki.de/download/4.3.0/" />
+    </package>
+  </language>
+</marytts-install>

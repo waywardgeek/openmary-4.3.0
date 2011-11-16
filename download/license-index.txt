@@ -1,0 +1,4 @@
+http___mary.dfki.de_download_by-nd-3.0.html|http://mary.dfki.de/download/by-nd-3.0.html
+http___mary.dfki.de_download_voices_arctic-license.html|http://mary.dfki.de/download/voices/arctic-license.html
+http___www.gnu.org_licenses_lgpl-3.0-standalone.html|http://www.gnu.org/licenses/lgpl-3.0-standalone.html
+http___mary.dfki.de_download_Mbrola%20software%20user%20agreement.html|http://mary.dfki.de/download/Mbrola%20software%20user%20agreement.html
