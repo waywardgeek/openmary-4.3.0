@@ -314,33 +314,6 @@ public class HTSVocoder implements DoubleDataProducer {
         
     } /* method initMixedExcitation */
 
-    
-    /** 
-     * HTS_MLSA_Vocoder: Synthesis of speech out of mel-cepstral coefficients. 
-     * This procedure uses the parameters generated in pdf2par stored in:
-     *   PStream mceppst: Mel-cepstral coefficients
-     *   PStream strpst : Filter bank stregths for mixed excitation
-     *   PStream magpst : Fourier magnitudes
-     *   PStream lf0pst : Log F0  
-     */
-    /*
-    public AudioInputStream htsMLSAVocoder(HTSParameterGeneration pdf2par, HMMData htsData) 
-    throws Exception {
-        
-        float sampleRate = 16000.0F;  //8000,11025,16000,22050,44100
-        int sampleSizeInBits = 16;  //8,16
-        int channels = 1;     //1,2
-        boolean signed = true;    //true,false
-        boolean bigEndian = false;  //true,false
-        AudioFormat af = new AudioFormat(
-              sampleRate,
-              sampleSizeInBits,
-              channels,
-              signed,
-              bigEndian);
-    } // method htsMLSAVocoder()
-    */
-    
     /** 
      * HTS_MLSA_Vocoder: Synthesis of speech out of mel-cepstral coefficients. 
      * This procedure uses the parameters generated in pdf2par stored in:
@@ -795,6 +768,7 @@ public class HTSVocoder implements DoubleDataProducer {
       }
       
       logger.info("Finish processing " + mcepframe + " mcep frames.");
+        
       return(audio_double);
       
     } /* method htsMLSAVocoder() */
@@ -2123,7 +2097,9 @@ public class HTSVocoder implements DoubleDataProducer {
       }
  
     }
-
+        
+    
+    
 }  /* class HTSVocoder */
 
 
