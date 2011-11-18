@@ -181,6 +181,7 @@ public class DDSAudioInputStream extends AudioInputStream {
      * @throws IOException if an input or output error occurs
      */
     public void close() throws IOException {
+        source.close();
     }
     
     /**

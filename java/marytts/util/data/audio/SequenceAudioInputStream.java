@@ -192,7 +192,9 @@ public class SequenceAudioInputStream
 	public void close()
 		throws	IOException
 	{
-		// TODO: should we close all streams in the list?
+	    for(AudioInputStream audioStream : m_audioInputStreamList) {
+	        audioStream.close();
+	    }
 	}
 
 

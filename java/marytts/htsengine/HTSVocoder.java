@@ -180,6 +180,7 @@ public class HTSVocoder implements DoubleDataProducer {
     private HMMData htsData;
     private ArrayBlockingQueue<Double> queue = null;
     private boolean finishedSynthesis = false;
+    private boolean quitting = false;
     
     public void setUseLpcVocoder(boolean bval){ lpcVocoder = bval; }
     
@@ -347,7 +348,7 @@ public class HTSVocoder implements DoubleDataProducer {
         // Don't scale the data, since we don't have it all yet.
         // TODO: Deal with audio scaling some other way.
         finishedSynthesis = false;
-        DoubleDataSourceQueue dataQueue = new DoubleDataSourceQueue(this, 1024);
+        DoubleDataSourceQueue dataQueue = new DoubleDataSourceQueue(this, 256);
         return new DDSAudioInputStream(dataQueue, af);
 
         /*
@@ -381,19 +382,31 @@ public class HTSVocoder implements DoubleDataProducer {
         }
     }
     
+    public void close() {
+        quitting = true;
+        queue.clear();
+        try {
+            // To wake up any pending queue.take()
+            queue.put(0.0);
+        } catch (InterruptedException e) {
+            // We're ending anyway
+        }
+    }
+    
     public boolean hasMoreData() {
-        // TODO: See if we need to deal with a race condition on the finishedSynthesis flag.
-        return !finishedSynthesis;
+        return !finishedSynthesis && !quitting;
     }
     
     private void addToQueue(double x, boolean finished)
     {
         try {
-            queue.put(x);
+            //if(!quitting) {
+                queue.put(x);
+            //}
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        finishedSynthesis = finished;
+        finishedSynthesis = finished || quitting;
     }
         
     public double [] htsMLSAVocoder(HTSPStream lf0Pst, HTSPStream mcepPst, HTSPStream strPst, HTSPStream magPst, 
@@ -517,7 +530,7 @@ public class HTSVocoder implements DoubleDataProducer {
       audio_double = new double[audio_size];  /* initialise buffer for audio */
       magSample = 1;
       magPulseSize = 0;
-      for(mcepframe=0,lf0frame=0; mcepframe<mcepPst.getT(); mcepframe++) {
+      for(mcepframe=0,lf0frame=0; mcepframe<mcepPst.getT() && !quitting; mcepframe++) {
        
         /* get current feature vector mcp */ 
         for(i=0; i<m; i++)

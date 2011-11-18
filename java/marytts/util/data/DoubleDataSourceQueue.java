@@ -29,16 +29,24 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class DoubleDataSourceQueue extends BaseDoubleDataSource{
 
-    DoubleDataProducer producer;
-    ArrayBlockingQueue<Double> queue;
-    double maxValue = 17000.0;
+    private DoubleDataProducer producer;
+    private Thread producerThread;
+    private ArrayBlockingQueue<Double> queue;
+    private double maxValue = 22000.0;
+    private boolean quitting = false;
     
     public DoubleDataSourceQueue(DoubleDataProducer producer, int capacity) {
         this.producer = producer;
         queue = new ArrayBlockingQueue<Double>(capacity);
         producer.setQueue(queue);
-        Thread producerThread = new Thread(producer);
+        producerThread = new Thread(producer);
         producerThread.start();
+    }
+    
+    public void close()
+    {
+        quitting = true;
+        producer.close();
     }
     
     private double abs(double value)
@@ -51,10 +59,13 @@ public class DoubleDataSourceQueue extends BaseDoubleDataSource{
 
     public int getData(double[] target, int targetPos, int length)
     {
+        double initialMaxValue = maxValue;
         for(int i=0; i < length; i++) {
             try {
-                if(!producer.hasMoreData() && queue.isEmpty()) {
-                    System.out.printf("max volume: %f\n", maxValue); 
+                if(quitting || (!producer.hasMoreData() && queue.isEmpty())) {
+                    if(maxValue > initialMaxValue) {
+                        System.out.printf("max volume: %f\n", maxValue);
+                    }
                     return i;
                 }
                 double value = queue.take();

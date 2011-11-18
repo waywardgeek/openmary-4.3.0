@@ -202,13 +202,18 @@ public class Request {
     {
     	return streamAudio;
     }
-    
+
     /**
      * Inform this request that any further processing does not make sense.
      */
     public void abort() {
         logger.info("Requesting abort.");
         abortRequested = true;
+        try {
+            appendableAudioStream.close();
+        } catch (IOException e) {
+            logger.warn("Problem closing audio streams", e);
+        }
     }
     
     /**

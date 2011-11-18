@@ -81,4 +81,9 @@ public interface DoubleDataSource {
      */
     public long getDataLength();
 
+    /*
+     * With the new DoubleDataSourceQueue, we need to close or it leaves zombie threads stuck on queue.take().
+     */
+    public void close();
+
 }

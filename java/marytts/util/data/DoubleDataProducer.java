@@ -32,5 +32,6 @@ public interface DoubleDataProducer extends Runnable {
     // it needs to write double data to this queue until all data is generated.
     public void setQueue(ArrayBlockingQueue<Double> queue);
     public boolean hasMoreData();
+    public void close();
     
 }
