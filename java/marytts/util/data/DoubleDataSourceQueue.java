@@ -62,14 +62,22 @@ public class DoubleDataSourceQueue extends BaseDoubleDataSource{
         double initialMaxValue = maxValue;
         for(int i=0; i < length; i++) {
             try {
-                if(quitting || (!producer.hasMoreData() && queue.isEmpty())) {
-                    if(maxValue > initialMaxValue) {
-                        System.out.printf("max volume: %f\n", maxValue);
-                    }
+                double value;
+                if(!quitting) {
+                    value = queue.take();
+                } else {
+                    value = 0.0;
+                }
+                if(value == Double.MAX_VALUE) {
+                    quitting = true;
+                }
+                if(quitting) {
+                    //if(maxValue > initialMaxValue) {
+                        //System.out.printf("max volume: %f\n", maxValue);
+                    //}
                     return i;
                 }
-                double value = queue.take();
-                //System.out.printf("Got value: %f\n", value); 
+                //System.out.printf("Got value: %f\n", value);
                 if(abs(value) > maxValue) {
                     maxValue = abs(value);
                 }
@@ -88,6 +96,6 @@ public class DoubleDataSourceQueue extends BaseDoubleDataSource{
      */
     public boolean hasMoreData()
     {
-        return producer.hasMoreData();
+        return !quitting;
     }
 }

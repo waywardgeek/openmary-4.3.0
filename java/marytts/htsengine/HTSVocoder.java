@@ -179,7 +179,6 @@ public class HTSVocoder implements DoubleDataProducer {
     private boolean [] voiced;
     private HMMData htsData;
     private ArrayBlockingQueue<Double> queue = null;
-    private boolean finishedSynthesis = false;
     private boolean quitting = false;
     
     public void setUseLpcVocoder(boolean bval){ lpcVocoder = bval; }
@@ -347,7 +346,6 @@ public class HTSVocoder implements DoubleDataProducer {
         
         // Don't scale the data, since we don't have it all yet.
         // TODO: Deal with audio scaling some other way.
-        finishedSynthesis = false;
         DoubleDataSourceQueue dataQueue = new DoubleDataSourceQueue(this, 256);
         return new DDSAudioInputStream(dataQueue, af);
 
@@ -387,32 +385,27 @@ public class HTSVocoder implements DoubleDataProducer {
         queue.clear();
         try {
             // To wake up any pending queue.take()
-            queue.put(0.0);
+            queue.put(Double.MAX_VALUE);
         } catch (InterruptedException e) {
             // We're ending anyway
         }
     }
     
-    public boolean hasMoreData() {
-        return !finishedSynthesis && !quitting;
-    }
-    
-    private void addToQueue(double x, boolean finished)
+    private void addToQueue(double x)
     {
         try {
-            //if(!quitting) {
-                queue.put(x);
-            //}
+            queue.put(x);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        finishedSynthesis = finished || quitting;
     }
         
     public double [] htsMLSAVocoder(HTSPStream lf0Pst, HTSPStream mcepPst, HTSPStream strPst, HTSPStream magPst, 
                                     boolean [] voiced, HMMData htsData)
     throws Exception {
 
+      logger.info("Starting synthesis processing");
+      boolean firstSampleSent = false;
       double inc, x, MaxSample;
       short sx;
       double xp=0.0,xn=0.0,fxp,fxn,mix;  /* samples for pulse and for noise and the filtered ones */
@@ -632,7 +625,7 @@ public class HTSVocoder implements DoubleDataProducer {
         /* Generate fperiod samples per feature vector, normally 80 samples per frame */
         //p1=0.0;
         gauss=false;
-        for(j=fprd-1, i=(iprd+1)/2; j>=0; j--) {          
+        for(j=fprd-1, i=(iprd+1)/2; j>=0 && !quitting; j--) {          
           if(p1 == 0.0) {
             if(gauss)
               x = rand.nextGaussian();  /* returns double, gaussian distribution mean=0.0 and var=1.0 */
@@ -745,7 +738,11 @@ public class HTSVocoder implements DoubleDataProducer {
           
           audio_double[s_double] = x;
           if(queue != null) {
-              addToQueue(x, j == 0 && mcepframe + 1 == mcepPst.getT());
+              addToQueue(x);
+              if(!firstSampleSent) {
+                  firstSampleSent = true;
+                  logger.info("Sent first speech sample");
+              }
           }
 
           s_double++;
@@ -782,6 +779,9 @@ public class HTSVocoder implements DoubleDataProducer {
       
       logger.info("Finish processing " + mcepframe + " mcep frames.");
         
+      if(queue != null) {
+          addToQueue(Double.MAX_VALUE);
+      }
       return(audio_double);
       
     } /* method htsMLSAVocoder() */

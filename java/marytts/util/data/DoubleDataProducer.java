@@ -30,8 +30,10 @@ public interface DoubleDataProducer extends Runnable {
     
     // Called before starting the producer.  When the run thread is called,
     // it needs to write double data to this queue until all data is generated.
+    // To indicate no more data, a value of Double.MAX_VALUE is inserted into the queue.
     public void setQueue(ArrayBlockingQueue<Double> queue);
-    public boolean hasMoreData();
+    // This clears the queue, flags the producer thread to quit, and inserts an end token into
+    // the queue.
     public void close();
     
 }
