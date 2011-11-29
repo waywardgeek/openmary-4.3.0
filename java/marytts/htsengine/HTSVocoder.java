@@ -376,7 +376,7 @@ public class HTSVocoder implements DoubleDataProducer {
         try {
             htsMLSAVocoder(lf0Pst, mcepPst, strPst, magPst, voiced, htsData);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.fatal("htsMLSAVocoder threw unexpected exception", e);
         }
     }
     
@@ -396,7 +396,7 @@ public class HTSVocoder implements DoubleDataProducer {
         try {
             queue.put(x);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.fatal("Someone interrupted the synthesis queue.  Are we shutting down?", e);
         }
     }
         

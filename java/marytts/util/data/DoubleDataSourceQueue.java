@@ -83,7 +83,7 @@ public class DoubleDataSourceQueue extends BaseDoubleDataSource{
                 }
                 target[targetPos + i] = value/maxValue;
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // Must have closed on us for some reason.
                 return i;
             }
         }
